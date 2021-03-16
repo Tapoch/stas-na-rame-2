@@ -1,19 +1,22 @@
-# stas-na-rame-2
+# Стас на раме 2
 
-## Project setup
+Продолжение легендарной игры. Стек: vue 2.6, vue-router, vuex, firebase, tailwind. Для подключения к firebase необходим
+.env.local файл с соответствующими данными.
+
+## Установка
+
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Локальная разработка с hot-reload
+
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Сборка в продакшн
+
 ```
 npm run build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
