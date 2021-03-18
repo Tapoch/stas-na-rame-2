@@ -5,24 +5,39 @@ export default {
     user: null
   },
   mutations: {
-    USER_SET (state, payload) {
+    USER_SET(state, payload) {
       state.user = payload
     }
   },
   actions: {
-    signUserUp ({commit}, payload) {
+    signUserUp({commit}, payload) {
       commit('SHARED_SET_LOADING', true)
       commit('SHARED_CLEAR_ERROR')
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(
           user => {
-            commit('SHARED_SET_LOADING', false)
-            const newUser = {
-              id: user.uid,
-              name: user.displayName,
-              email: user.email
-            }
-            commit('USER_SET', newUser)
+            const db = firebase.firestore()
+            db.collection('users').doc(user.uid).set({
+              name: payload.name
+            })
+              .then(
+                () => {
+                  commit('SHARED_SET_LOADING', false)
+                  const newUser = {
+                    id: user.uid,
+                    name: user.displayName,
+                    email: user.email
+                  }
+                  commit('USER_SET', newUser)
+                }
+              )
+              .catch(
+                error => {
+                  commit('SHARED_SET_LOADING', false)
+                  commit('SHARED_SET_ERROR', error)
+                  console.log(error)
+                }
+              )
           }
         )
         .catch(
@@ -33,7 +48,7 @@ export default {
           }
         )
     },
-    signUserIn ({commit}, payload) {
+    signUserIn({commit}, payload) {
       commit('SHARED_SET_LOADING', true)
       commit('SHARED_CLEAR_ERROR')
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
@@ -56,15 +71,15 @@ export default {
           }
         )
     },
-    autoSignIn ({commit}, payload) {
+    autoSignIn({commit}, payload) {
       commit('USER_SET', {
         id: payload.uid,
         name: payload.displayName,
         email: payload.email,
       })
     },
-    resetPasswordWithEmail ({ commit }, payload) {
-      const { email } = payload
+    resetPasswordWithEmail({commit}, payload) {
+      const {email} = payload
       commit('SHARED_SET_LOADING', true)
       firebase.auth().sendPasswordResetEmail(email)
         .then(
@@ -81,13 +96,13 @@ export default {
           }
         )
     },
-    logout ({commit}) {
+    logout({commit}) {
       firebase.auth().signOut()
       commit('USER_SET', null)
     }
   },
   getters: {
-    user (state) {
+    user(state) {
       return state.user
     }
   }

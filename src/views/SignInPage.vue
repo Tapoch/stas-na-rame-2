@@ -1,16 +1,15 @@
 <template>
   <div class="text-white">
-    <div class="flex justify-center">
-      <img src="../assets/logo.png" alt="Стас на раме 2">
-    </div>
+    <MainLogo />
     <SignInForm />
   </div>
 </template>
 
 <script>
 import SignInForm from "@/components/SignInForm";
+import MainLogo from "@/components/MainLogo";
 export default {
   name: "SignInPage",
-  components: {SignInForm}
+  components: {MainLogo, SignInForm}
 }
 </script>

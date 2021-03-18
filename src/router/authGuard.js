@@ -4,7 +4,7 @@ const authGuard = (to, from, next) => {
   if (store.getters.user) {
     next()
   } else {
-    next('/signin')
+    next('/signup')
   }
 }
 
