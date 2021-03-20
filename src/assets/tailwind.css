@@ -17,3 +17,7 @@
   font-style: normal;
   font-weight: 700;
 }
+
+.sign-input {
+  @apply w-full p-2 focus:outline-none text-gray-700 block
+}

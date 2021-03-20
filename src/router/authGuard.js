@@ -1,6 +1,6 @@
 import store from '@/store'
 
-const authGuard = (to, from, next) => {
+export const notAuthorized = (to, from, next) => {
   if (store.getters.user) {
     next()
   } else {
@@ -8,4 +8,10 @@ const authGuard = (to, from, next) => {
   }
 }
 
-export default authGuard
+export const authorized = (to, from, next) => {
+  if(store.getters.user) {
+    next('/')
+  } else {
+    next()
+  }
+}

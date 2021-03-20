@@ -1,9 +1,15 @@
 <template>
-  <h1>Home</h1>
+  <div class="text-white">
+    <NavBar />
+    <MainGrid />
+  </div>
 </template>
 
 <script>
+import MainGrid from "@/components/game/MainGrid";
+import NavBar from "@/components/NavBar";
 export default {
-  name: "IndexPage"
+  name: "IndexPage",
+  components: {NavBar, MainGrid}
 }
 </script>

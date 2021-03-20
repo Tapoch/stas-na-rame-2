@@ -20,15 +20,21 @@ const firebaseConfig = {
 }
 
 new Vue({
-  router,
   store,
+  router,
   render: h => h(App),
   created() {
     firebase.initializeApp(firebaseConfig)
-    firebase.auth().onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
-        this.$store.dispatch('autoSignIn', user)
+        const db = firebase.firestore()
+        const userData = await db.collection('users').doc(user.uid).get()
+        if (userData.exists) {
+          user = {...user, displayName: userData.data().name}
+        }
+        await this.$store.dispatch('autoSignIn', user)
       }
+      await this.$store.dispatch('setIsAppReady', true)
     })
   }
 }).$mount('#app')
