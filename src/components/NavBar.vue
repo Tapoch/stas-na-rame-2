@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row w-full bg-gray-700 py-2 px-16 text-lg justify-between">
+  <div class="flex flex-row w-full bg-gray-700 py-2 px-16 text-lg justify-between shadow-md">
     <div>
       <router-link to="/">Главная</router-link>
     </div>
