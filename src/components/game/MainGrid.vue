@@ -11,7 +11,7 @@
            class="cell rounded-xl border border-gray-500 p-0 relative select-none">{{ cell.level }}
         <span v-if="cell.level !== 0" class="absolute bottom-20 left-0 animate-flicker">+{{
             cell.income.value
-          }}{{ cell.income.gradation > 1 ? getGradationMark(cell.income.gradation) : '' }}</span>
+          }}{{ getGradation(cell.income.gradation) }}</span>
       </div>
     </div>
   </div>
@@ -19,6 +19,7 @@
 
 <script>
 import {mapActions, mapGetters, mapState} from "vuex";
+import {calculateIncome, recalculate, sum} from "@/lib/logic";
 
 export default {
   name: "MainGrid",
@@ -34,66 +35,37 @@ export default {
       if (this.dragged) {
         return this.cellByIndex(this.dragged)
       }
-    }
-  },
-  watch: {
-    lpGames(val) {
-      Object.keys(val).forEach(gradation => {
-        if(val[gradation] >= 1000) {
-          //TODO
-        }
-      })
-    }
+    },
+
   },
   mounted() {
-    this.updateHeroesInterval = setInterval(this.updateHeroes, 5000)
-    this.updateLpInterval = setInterval(this.updateLp, 1000)
+    this.updateHeroesInterval = setInterval(this.updateHeroes, 5_000)
+    this.updateLpInterval = setInterval(this.updateLp, 1_000)
     const nodes = Array.from(document.querySelectorAll(`[data-id]`))
     this.cellNodes = nodes.map(node => ({index: node.getAttribute('data-id'), node}))
   },
   methods: {
-    ...mapActions(['setCellByIndex', 'setLp', 'decrementLp', 'getGradationMark']),
-    sumObjectsByKey(...objs) {
-      return objs.reduce((a, b) => {
-        for (let k in b) {
-          if (b.hasOwnProperty(k))
-            a[k] = (a[k] || 0) + b[k];
-        }
-        return a;
-      }, {});
-    },
+    ...mapActions(['setCellByIndex', 'setLp', 'getGradationMark']),
     updateLp() {
-      let income = {}
+      let games = {...this.lpGames}
       this.cells.forEach(cell => {
         if (cell.level > 0) {
-          if(income[cell.income.gradation]) {
-            income[cell.income.gradation] += cell.income.value
-          } else {
-            income[cell.income.gradation] = cell.income.value
-          }
+          games = sum(games, cell.income)
         }
       })
-      let result = this.sumObjectsByKey(this.lpGames, income)
-      this.setLp(result)
+      games = recalculate(games)
+      this.setLp(games)
+
     },
     updateHeroes() {
       let endIteration = false
       this.cells.forEach(cell => {
         if (cell.level === 0 && !endIteration) {
           cell.level = this.baseLevel
-          cell.income = {gradation: 1, value: this.getValue(this.baseRate, cell.level)}
+          cell.income = calculateIncome(this.baseRate, cell.level)
           endIteration = true
         }
       })
-    },
-    getValue(baseRate, level) {
-      if (level === 1) {
-        return baseRate
-      } else if (level < 1) {
-        return 0
-      } else {
-        return 3 * this.getValue(baseRate, level - 1)
-      }
     },
     onDragStart(index) {
       this.dragged = index
@@ -105,14 +77,14 @@ export default {
           this.setCellByIndex({
             index,
             level: this.draggedCell.level,
-            income: {gradation: 1, value: this.getValue(this.baseRate, this.draggedCell.level)}
+            income: calculateIncome(this.baseRate, this.draggedCell.level)
           })
           this.setCellByIndex({index: this.dragged, level: 0, income: {gradation: 1, value: 0}})
         } else if (overCell.level === this.draggedCell.level) {
           this.setCellByIndex({
             index,
             level: overCell.level + 1,
-            income: {gradation: 1, value: this.getValue(this.baseRate, overCell.level + 1)}
+            income: calculateIncome(this.baseRate, overCell.level + 1)
           })
           this.setCellByIndex({index: this.dragged, level: 0, income: {gradation: 1, value: 0}})
         }
@@ -127,6 +99,9 @@ export default {
     cellByIndex(index) {
       return this.cells.filter(cell => cell.index === index)[0]
     },
+    getGradation(gradation) {
+      return this.gradation[gradation]
+    }
   }
 }
 </script>
