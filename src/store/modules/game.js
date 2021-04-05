@@ -1,7 +1,7 @@
 export default {
   state: {
     cells: [
-      {index: 1, level: 0, income: {gradation: 0, value: 0}},
+      {index: 1, level: 1, income: {gradation: 0, value: 500}},
       {index: 2, level: 0, income: {gradation: 0, value: 0}},
       {index: 3, level: 0, income: {gradation: 0, value: 0}},
       {index: 4, level: 0, income: {gradation: 0, value: 0}},

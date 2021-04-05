@@ -19,7 +19,7 @@
 
 <script>
 import {mapActions, mapGetters, mapState} from "vuex";
-import {calculateIncome, recalculate, sum} from "@/lib/logic";
+import {calculateIncome, checkBigger, recalculate, sub, sum} from "@/lib/logic";
 
 export default {
   name: "MainGrid",
@@ -39,10 +39,21 @@ export default {
 
   },
   mounted() {
-    this.updateHeroesInterval = setInterval(this.updateHeroes, 5_000)
+    this.updateHeroesInterval = setInterval(this.updateHeroes, 99_000)
     this.updateLpInterval = setInterval(this.updateLp, 1_000)
     const nodes = Array.from(document.querySelectorAll(`[data-id]`))
     this.cellNodes = nodes.map(node => ({index: node.getAttribute('data-id'), node}))
+
+
+    const testScore = {
+      2: 1
+    }
+    const testCost = {
+      gradation: 0,
+      value: 500
+    }
+    const subRes = (sub(testScore, testCost))
+    console.log(recalculate(subRes))
   },
   methods: {
     ...mapActions(['setCellByIndex', 'setLp', 'getGradationMark']),
@@ -55,7 +66,6 @@ export default {
       })
       games = recalculate(games)
       this.setLp(games)
-
     },
     updateHeroes() {
       let endIteration = false

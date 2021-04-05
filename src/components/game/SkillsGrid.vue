@@ -12,7 +12,9 @@
           <p class="text-sm">{{ skill.description }}</p>
         </div>
         <div class="flex items-center">
-          20000
+          {{
+
+          }}
         </div>
       </div>
     </div>
@@ -20,6 +22,8 @@
 </template>
 
 <script>
+import {calculateIncome} from "@/lib/logic";
+
 export default {
   name: "SkillsGrid",
   data: () => ({
@@ -29,16 +33,31 @@ export default {
         name: 'Повысить уровень',
         img: 'https://via.placeholder.com/64',
         description: 'Улучшает базового героя на 1',
-        level: 0
+        level: 0,
+        baseCost: {
+          gradation: 1,
+          value: 20
+        },
+        rate: 4
       },
       {
         id: 2,
         name: 'Респавн',
         img: 'https://via.placeholder.com/64',
         description: 'Уменьшает респавн героя на 0.1с',
-        level: 0
+        level: 0,
+        baseCost: {
+          gradation: 1,
+          value: 20
+        },
+        rate: 4
       }
     ]
-  })
+  }),
+  methods: {
+    cost(value, gradation, rate) {
+      this.calculateIncome(value, gradation, rate)
+    }
+  }
 }
 </script>

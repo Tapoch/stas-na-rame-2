@@ -4,12 +4,12 @@ export const sum = (defValue, {gradation, value}) => {
 }
 
 export const recalculate = (value) => {
-  console.log('<<<')
+  //console.log('<<<')
   const gradations = Object.keys(value)
-  console.log('gradations', gradations.length)
+  //console.log('gradations', gradations.length)
   const leftValue = gradations.reduce((prev, current) => {
     value[current] += prev
-    console.log(value[current])
+    //console.log(value[current])
     if (value[current] >= 1000) {
       const scoreCurrent = value[current]
       value[current] = scoreCurrent % 1000
@@ -17,22 +17,27 @@ export const recalculate = (value) => {
     }
     return 0
   }, 0)
-  console.log('left', leftValue)
+  //console.log('left', leftValue)
   if (leftValue > 0) {
     value[gradations.length] = leftValue
     value = recalculate(value)
   }
-  console.log('>>>')
+  for (const key in value) {
+    if (value.hasOwnProperty(key) && value[key] === 0) {
+      delete value[key]
+    }
+  }
+  //console.log('>>>')
   return value
 }
 
-export const calculateIncome = (baseRate, level) => {
+export const calculateIncome = (baseRate, level, rate = 3) => {
   const levels = [...Array(level + 1).keys()].slice(1)
   return levels.reduce((prev, current) => {
     if (current === 1) {
       return {gradation: 0, value: baseRate}
     } else {
-      let newValue = prev.value * 3
+      let newValue = prev.value * rate
       let newGradation = prev.gradation
       if (newValue >= 1000) {
         newGradation++
@@ -41,4 +46,30 @@ export const calculateIncome = (baseRate, level) => {
       return {gradation: newGradation, value: newValue}
     }
   }, {gradation: 0, value: 0})
+}
+export const checkBigger = (bigger, {gradation, value}) => {
+  const maxGradation = Math.max(...Object.keys(bigger).map(gradation => parseInt(gradation)))
+  if (maxGradation > gradation) {
+    return true
+  } else if (maxGradation === gradation) {
+    return bigger[maxGradation] >= value;
+  }
+  return false
+}
+
+export const sub = (bigger, {gradation, value}) => {
+  bigger[gradation] = (bigger[gradation] || 0) - value
+  if (bigger[gradation] < 0) {
+    calculateGradation(bigger, gradation)
+  }
+  return bigger
+}
+
+const calculateGradation = (bigger, gradation) => {
+  bigger[gradation+1] = (bigger[gradation+1] || 0) - 1
+  bigger[gradation] = bigger[gradation] + 1000
+  if(bigger[gradation+1] < 0) {
+    calculateGradation(bigger, gradation + 1)
+  }
+  return bigger
 }
