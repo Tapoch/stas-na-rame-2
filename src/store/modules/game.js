@@ -26,7 +26,7 @@ export default {
     lpGames: {},
     rubles: 0,
     baseRate: 1,
-    baseLevel: 1
+    baseLevel: 1,
   },
   mutations: {
     SET_CELL(state, payload) {

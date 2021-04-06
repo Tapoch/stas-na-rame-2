@@ -31,11 +31,11 @@ export const recalculate = (value) => {
   return value
 }
 
-export const calculateIncome = (baseRate, level, rate = 3) => {
+export const calculateIncome = (baseRate, level, rate = 3, gradation = 0) => {
   const levels = [...Array(level + 1).keys()].slice(1)
   return levels.reduce((prev, current) => {
     if (current === 1) {
-      return {gradation: 0, value: baseRate}
+      return {gradation, value: baseRate}
     } else {
       let newValue = prev.value * rate
       let newGradation = prev.gradation
