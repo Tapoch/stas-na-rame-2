@@ -20,6 +20,7 @@
 <script>
 import {mapActions, mapGetters, mapState} from "vuex";
 import {calculateIncome, checkBigger, recalculate, sub, sum} from "@/lib/logic";
+import skills from "@/store/modules/skills";
 
 export default {
   name: "MainGrid",
@@ -28,18 +29,38 @@ export default {
     updateLpInterval: null,
     updateHeroesInterval: null,
     cellNodes: [],
+    baseLevel: 1,
+    updateHeroesIntervalRate: 6_000
   }),
   computed: {
-    ...mapGetters(['cells', 'baseRate', 'baseLevel', 'gradation', 'lpGames']),
+    ...mapGetters(['cells', 'baseRate', 'gradation', 'lpGames', 'skills']),
     draggedCell() {
       if (this.dragged) {
         return this.cellByIndex(this.dragged)
       }
     },
-
+  },
+  watch: {
+    skills(val) {
+      val.forEach(skill => {
+        if (skill.code === 'level') {
+          this.baseLevel = skill.level + 1
+          this.cells.forEach(cell => {
+            if (cell.level !== 0 && cell.level < this.baseLevel) {
+              cell.level = this.baseLevel
+              cell.income = calculateIncome(this.baseRate, cell.level)
+            }
+          })
+        } else if (skill.code === 'heroUpdateRate') {
+          this.updateHeroesIntervalRate = 6_000 - (skill.level * 100)
+          clearInterval(this.updateHeroesInterval)
+          this.updateHeroesInterval = setInterval(this.updateHeroes, this.updateHeroesIntervalRate)
+        }
+      })
+    }
   },
   mounted() {
-    this.updateHeroesInterval = setInterval(this.updateHeroes, 99_000)
+    this.updateHeroesInterval = setInterval(this.updateHeroes, this.updateHeroesIntervalRate)
     this.updateLpInterval = setInterval(this.updateLp, 1_000)
     const nodes = Array.from(document.querySelectorAll(`[data-id]`))
     this.cellNodes = nodes.map(node => ({index: node.getAttribute('data-id'), node}))

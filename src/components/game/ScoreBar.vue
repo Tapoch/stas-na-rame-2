@@ -11,26 +11,7 @@ import {mapGetters} from "vuex";
 export default {
   name: "ScoreBar",
   computed: {
-    ...mapGetters(['lpGames', 'rubles', 'gradation']),
-    formattedLpGames() {
-      if(!Object.keys(this.lpGames).length) {
-        return 0
-      }
-        let highGradation = 0
-      Object.keys(this.lpGames).forEach(key => {
-        if (this.lpGames[key] > 0)
-          highGradation = key
-      })
-      if (highGradation > 0) {
-        return this.toFixedIfNecessary(this.lpGames[highGradation] + (this.lpGames[highGradation - 1] ? this.lpGames[highGradation - 1] : 0) / 1000, 3) + this.gradation[highGradation]
-      }
-      return this.lpGames[highGradation]
-    }
+    ...mapGetters(['rubles', 'formattedLpGames']),
   },
-  methods: {
-    toFixedIfNecessary( value, dp ){
-      return +parseFloat(value).toFixed( dp );
-    }
-  }
 }
 </script>

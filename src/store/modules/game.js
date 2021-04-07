@@ -1,7 +1,7 @@
 export default {
   state: {
     cells: [
-      {index: 1, level: 1, income: {gradation: 0, value: 500}},
+      {index: 1, level: 1, income: {gradation: 0, value: 1000}},
       {index: 2, level: 0, income: {gradation: 0, value: 0}},
       {index: 3, level: 0, income: {gradation: 0, value: 0}},
       {index: 4, level: 0, income: {gradation: 0, value: 0}},
@@ -26,7 +26,6 @@ export default {
     lpGames: {},
     rubles: 0,
     baseRate: 1,
-    baseLevel: 1,
   },
   mutations: {
     SET_CELL(state, payload) {
@@ -42,9 +41,6 @@ export default {
     },
     SET_BASE_RATE(state, payload) {
       state.baseRate = payload
-    },
-    SET_BASE_LEVEL(state, payload) {
-      state.baseLevel = payload
     },
     INCREMENT_RUBLES(state, payload) {
       state.rubles += payload
@@ -63,9 +59,6 @@ export default {
     setLp({commit}, payload) {
       commit('SET_LP', payload)
     },
-    setBaseLevel({commit}, payload) {
-      commit('SET_BASE_LEVEL', payload)
-    },
     getGradationMark({getters}, payload) {
       return getters.gradation[payload]
     }
@@ -80,14 +73,25 @@ export default {
     baseRate(state) {
       return state.baseRate
     },
-    baseLevel(state) {
-      return state.baseLevel
-    },
     rubles(state) {
       return state.rubles
     },
     gradation(state) {
       return state.gradation
+    },
+    formattedLpGames(state) {
+      if (!Object.keys(state.lpGames).length) {
+        return 0
+      }
+      let highGradation = 0
+      Object.keys(state.lpGames).forEach(key => {
+        if (state.lpGames[key] > 0)
+          highGradation = key
+      })
+      if (highGradation > 0) {
+        return +parseFloat(state.lpGames[highGradation] + (state.lpGames[highGradation - 1] ? state.lpGames[highGradation - 1] : 0) / 1000).toFixed(3) + state.gradation[highGradation]
+      }
+      return state.lpGames[highGradation]
     }
   }
 }

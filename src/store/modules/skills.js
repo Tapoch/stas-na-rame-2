@@ -8,7 +8,9 @@ export default {
         description: 'Улучшает базового героя на 1',
         level: 0,
         startValue: {gradation: 1, value: 20},
-        baseRate: 4
+        baseRate: 4,
+        maxLevel: 100,
+        code: 'level'
       },
       {
         id: 2,
@@ -17,7 +19,9 @@ export default {
         description: 'Уменьшает респавн героя на 0.1с',
         level: 0,
         startValue: {gradation: 1, value: 1},
-        baseRate: 5
+        baseRate: 2,
+        maxLevel: 40,
+        code: 'heroUpdateRate'
       }
     ]
   },
